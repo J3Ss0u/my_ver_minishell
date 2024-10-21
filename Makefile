@@ -3,7 +3,7 @@ NAME = minishell
 COMPILER = cc
 
 FLAGS = -Wall -Wextra -Werror
-OTHERFLAGS = -lreadline  -L  /Users/mel-jira/homebrew/opt/readline/lib
+OTHERFLAGS = -lreadline  -L  /Users/sacharai/homebrew/opt/readline/lib
 
 FILES = main.c \
 		utilities/ft_putstr_fd.c \
@@ -70,7 +70,6 @@ FILES = main.c \
 		structure_helper2.c \
 		signals.c \
 		printdata.c \
-		switcharoo.c \
 		garbg_clctr.c
 
 OBJ = $(FILES:.c=.o)
@@ -81,7 +80,7 @@ $(NAME) : $(OBJ)
 	$(COMPILER) $(FLAGS) $(OTHERFLAGS) $(OBJ) -o $(NAME)
 
 %.o: %.c minishell.h
-	$(COMPILER) $(FLAGS) -I /Users/mel-jira/homebrew/opt/readline/include -c $< -o $@
+	$(COMPILER) $(FLAGS) -I /Users/sacharai/homebrew/opt/readline/include -c $< -o $@
 
 clean:
 	rm -rf $(OBJ)
