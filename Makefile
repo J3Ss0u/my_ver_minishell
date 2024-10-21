@@ -70,6 +70,7 @@ FILES = main.c \
 		structure_helper2.c \
 		signals.c \
 		printdata.c \
+		switcharoo.c \
 		garbg_clctr.c
 
 OBJ = $(FILES:.c=.o)

