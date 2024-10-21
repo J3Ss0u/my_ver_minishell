@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   execution.c                                        :+:      :+:    :+:   */
+/*   check_bult.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sacharai <sacharai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/10 15:02:03 by sacharai          #+#    #+#             */
-/*   Updated: 2024/02/11 19:32:13 by sacharai         ###   ########.fr       */
+/*   Created: 2024/02/14 23:02:17 by sacharai          #+#    #+#             */
+/*   Updated: 2024/02/20 12:34:54 by sacharai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,41 +31,46 @@ int	is_builtin(t_ex *cmds)
 	else
 		return (0);
 }
+
 int	exec_builtin(char **cmds, t_env *env_list)
 {
 	if (!ft_strcmp(cmds[0], "echo"))
-		return(ft_echo(cmds), 0);
-	else if (!ft_strcmp(cmds[0], "exit"))
-		return(ft_exit(cmds), 0);
-	else if (!ft_strcmp(cmds[0], "unset"))
-		return(ft_unset(cmds), 0);
+		return (ft_echo(cmds), 0);
 	else if (!ft_strcmp(cmds[0], "env"))
-		return(ft_env(cmds), 0);
+		return (ft_env(env_list), 0);
 	else if (!ft_strcmp(cmds[0], "export"))
-		return(ft_export(cmds), 0);
-	else if (!ft_strcmp(cmds[0], "cd"))
-		return(ft_cd(cmds), 0);
+		return (ft_export(env_list, cmds), 0);
 	else if (!ft_strcmp(cmds[0], "pwd"))
-		return(ft_pwd(cmds), 0);
+		return (ft_pwd(), 0);
+	else if (!ft_strcmp(cmds[0], "exit"))
+		return (ft_exit(cmds), 0);
+	else if (!ft_strcmp(cmds[0], "unset"))
+		return (ft_unset(&env_list, cmds), 0);
+	else if (!ft_strcmp(cmds[0], "cd"))
+		return (ft_cd(cmds, env_list), 0);
 	else
 		return (1);
 }
 
-void	normal_exec(t_var *cmds, t_env *env_list)
+void	cd_error(char *cmd)
 {
-    
-    while (cmds->cmd)
-    
-    if (cmds->cmd == 0)
-    {
-        if (is_builtin(cmds->cmd))
-            exec_builtin(cmds->cmd, env_list);
-
-    }
-    
+	write(2, "minishell: ", 11);
+	write(2, "cd: ", 4);
+	perror(cmd);
+	exit_status_fun(1);
 }
 
-void	execution(t_var *cmds, t_env *env_list)
+void	add_back(t_env **lst, t_env *ls)
 {
-	normal_exec(cmds, env_list);
+	t_env	*tmp;
+
+	if (!lst || !*lst || !ls)
+		return ;
+	tmp = *lst;
+	while (tmp->next)
+	{
+		tmp = tmp->next;
+	}
+	tmp->next = ls;
+	tmp->next->next = NULL;
 }

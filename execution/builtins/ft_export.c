@@ -6,33 +6,49 @@
 /*   By: sacharai <sacharai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/10 15:07:31 by sacharai          #+#    #+#             */
-/*   Updated: 2024/02/11 19:33:54 by sacharai         ###   ########.fr       */
+/*   Updated: 2024/02/20 17:08:51 by sacharai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-void	ft_export(t_env *exp_list, t_ex **allcmd)
+void	print_export(t_env *exp_list)
+{
+	while ((exp_list))
+	{
+		if ((exp_list)->value)
+			printf("declare -x %s=\"%s\"\n",
+				(exp_list)->key, (exp_list)->value);
+		else
+		{
+			if ((exp_list)->key[0])
+				printf("declare -x %s\n", (exp_list)->key);
+		}
+		(exp_list) = (exp_list)->next;
+	}
+}
+
+void	ft_export(t_env *exp_list, char **allcmd)
 {
 	int		i;
-	t_env	*new;
+	int		flag;
 
-	i = 2;
 	if (allcmd[1])
 	{
-		pars_args(*allcmd, "export");
-		*new = add_to_list(allcmd);
-
-	}
-	else if (!allcmd[2])
-	{
-		while (exp_list)
+		i = 1;
+		while (allcmd[i])
 		{
-			if (exp_list->value)
-				printf("declare -x %s=\"%s\"\n", exp_list->key, exp_list->value);
-			// else
-			// printf("declare -x %s\n", exp_list->key);
-			exp_list = exp_list->next;
+			flag = 0;
+			flag = pars_args(allcmd[i]);
+			if (flag != -1)
+			{
+				exp_list = add_to_list(allcmd[i], flag, exp_list);
+			}
+			else
+				exit_status_fun(1);
+			i++;
 		}
 	}
+	else
+		print_export(exp_list);
 }

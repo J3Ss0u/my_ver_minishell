@@ -6,17 +6,19 @@
 /*   By: sacharai <sacharai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/11 18:38:11 by sacharai          #+#    #+#             */
-/*   Updated: 2024/02/11 19:26:42 by sacharai         ###   ########.fr       */
+/*   Updated: 2024/02/20 13:43:12 by sacharai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	err_cmd(char *cmd)
+static void	err_cmd(char *cmd)
 {
-	write(2, " command not found: ", 21);
+	write(2, "minishell: ", 12);
 	write(2, cmd, ft_strlen(cmd));
+	write(2, ": command not found ", 21);
 	write(2, "\n", 1);
+	exit(127);
 }
 
 char	*my_strcpy(char *dest, char *src)
@@ -40,9 +42,7 @@ char	*search(char **path, char *cmd, int *fd, int *c)
 	char	*joined;
 	char	*filepath;
 
-	filepath = malloc(ft_strlen(path[*c]) + ft_strlen(cmd) + 2);
-	if (filepath == NULL)
-		return (perror(""), free(path), NULL);
+	filepath = ft_malloc(ft_strlen(path[*c]) + ft_strlen(cmd) + 2);
 	my_strcpy(filepath, path[*c]);
 	joined = ft_strjoin(filepath, cmd);
 	*fd = open(joined, O_RDONLY);
@@ -63,12 +63,12 @@ char	*find_path(char *full_paths, char *cmd)
 	int		fd;
 	char	*joined;
 
-	i = 0;
-	c = 0;
-	fd = -1;
+	init_find_path(&i, &c, &fd);
+	if (full_paths == NULL)
+		return (cmd);
 	if (cmd[i] == '/' || cmd[i] == '.')
 		return (cmd);
-	path = ft_split(full_paths, ':');
+	path = ft_split(full_paths, ":");
 	if (path)
 	{
 		while (path[i])
@@ -77,6 +77,7 @@ char	*find_path(char *full_paths, char *cmd)
 			joined = search(path, cmd, &fd, &c);
 		if (fd == -1)
 			err_cmd(cmd);
+		close(fd);
 		return (free(path), joined);
 	}
 	return (NULL);
@@ -87,12 +88,11 @@ char	*check_env_path(char **argenv)
 	char	*env;
 
 	env = "PATH";
+	if (argenv == NULL)
+		return (NULL);
 	while (*argenv && ft_strncmp(*argenv, env, 4) != 0)
 		(argenv)++;
-	if (!*argenv)
-	{
-		write(2, "> The environment variable PATH not exist\n", 42);
-		exit(1);
-	}
+	if (*argenv == NULL)
+		return (NULL);
 	return (*argenv + 5);
 }

@@ -6,7 +6,7 @@
 /*   By: sacharai <sacharai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/10 15:46:28 by sacharai          #+#    #+#             */
-/*   Updated: 2024/02/11 19:11:05 by sacharai         ###   ########.fr       */
+/*   Updated: 2024/02/17 06:02:17 by sacharai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,49 +62,31 @@ int	is_alnum(char c)
 	return (0);
 }
 
-void	check_chr(char **args, int len, char *cmd)
+int	check_chr(char *cmd)
 {
 	int	i;
-	int	j;
 
-	i = 2;
-	j = 1;
-	while (i < len)
+	i = 1;
+	while (cmd[i] && cmd[i] != '=')
 	{
-		j = 1;
-		while (args[i][j] && args[i][j] != '=')
+		if (cmd[i] == '+' && cmd[i + 1] == '=')
+			return (2);
+		if (is_alnum(cmd[i]) == 0)
 		{
-			//printf("%c\n", args[i][j]);
-			if (is_alnum(args[i][j]) == 0)
-			{
-				print_error("minishell", cmd, args[i], "not a valid identifier");
-				exit(1);
-			}
-			j++;
+			print_error("minishell", "export", cmd, "not a valid identifier");
+			return (-1);
 		}
 		i++;
 	}
+	return (0);
 }
 
-void	pars_args(t_ex **allcmd, char *cmd)
+int	pars_args(char *cmd)
 {
-	int	len;
-	int	i;
-	int	j;
-
-	len = 0;
-	i = 2;
-	while (allcmd[len])
-		len++;
-	while (i < len)
+	if (is_alpha(cmd[0]) == 0)
 	{
-		if (is_alpha(&allcmd[i][0]) == 0)
-		{
-			print_error("minishell", cmd, allcmd[i], "not a valid identifier");
-			exit(1);
-		}
-		i++;
+		print_error("minishell", "export", cmd, "not a valid identifier");
+		return (-1);
 	}
-	check_chr(allcmd, len, cmd);
-	printf("len ===== % d\n", len);
+	return (check_chr(cmd));
 }
